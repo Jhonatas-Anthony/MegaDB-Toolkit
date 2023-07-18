@@ -11,7 +11,7 @@ services:
     ports:
       - "5435:5435"
     volumes:
-      - ./files:/files
+      - ./data:/data
       
   pgadmin:
     container_name: pgadmin4_container
@@ -22,4 +22,4 @@ services:
     ports:
       - "5050:80"
     volumes:
-      - ./files:/files
+      - ./data:/data
