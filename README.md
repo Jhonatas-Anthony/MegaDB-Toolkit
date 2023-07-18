@@ -29,8 +29,21 @@ chmod 777 pg
 3. Para acessar, basta inserir o email: admin@admin.com e a senha: root
 4. Após isso vá em Object>Register>Server 
 5. Insira os dados: 
-    - Host/Name:            project
+    - Host/Name:            pg_container
     - Port:                 5432
     - Maintenance database: postgres
     - Username:             root
     - Password:             root
+
+Para criar as tabelas dê: 
+```bash
+./pg pop
+```
+Para recriar as tabelas dê: 
+```bash
+./pg reset
+```
+Para popular as tabelas com as funcionalidades criadas: 
+```bash
+./pg utils
+```
