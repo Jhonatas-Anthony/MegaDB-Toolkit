@@ -42,7 +42,8 @@ if [ "$#" -gt 0 ]; then
         docker exec -it pg_container /bin/bash -c \
         "cd data && \
         cd utils && \
-        psql -U root -d test_db -f ./functions.sql"
+        psql -U root -d test_db -f ./functions.sql && \
+        psql -U root -d test_db -f ./views.sql"
         echo "Dados inseridos com sucesso."
     fi
     if [ $1 = "stop" ]; then

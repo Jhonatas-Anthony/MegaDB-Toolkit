@@ -1,7 +1,7 @@
 CREATE TABLE IF NOT EXISTS "products" (
     "id" serial PRIMARY KEY,
     "name" VARCHAR(100),
-    "price" DECIMAL(10, 2)
+    "price" float
 );
 
 CREATE TABLE IF NOT EXISTS "infos" (
@@ -69,7 +69,7 @@ CREATE TABLE IF NOT EXISTS "offices" (
 ALTER TABLE "infos" ADD FOREIGN KEY ("product_id") REFERENCES "products" ("id");
 ALTER TABLE "infos" ADD FOREIGN KEY ("supplier_id") REFERENCES "supliers" ("id");
 ALTER TABLE "nota_fiscal" ADD FOREIGN KEY ("product_id") REFERENCES "products" ("id");
-ALTER TABLE "sales" ADD FOREIGN KEY ("nota_id") REFERENCES "notaFiscal" ("id");
+ALTER TABLE "sales" ADD FOREIGN KEY ("nota_id") REFERENCES "nota_fiscal" ("id");
 ALTER TABLE "sales" ADD FOREIGN KEY ("employees_id") REFERENCES "employees" ("id");
 ALTER TABLE "deposit" ADD FOREIGN KEY ("product_id") REFERENCES "products" ("id");
 ALTER TABLE "employees" ADD FOREIGN KEY ("office_id") REFERENCES "offices" ("id");
