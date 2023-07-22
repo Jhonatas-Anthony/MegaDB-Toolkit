@@ -33,7 +33,7 @@ if [ "$#" -gt 0 ]; then
         docker exec -it pg_container /bin/bash -c \
         "cd data && \
         cd inserts && \
-        psql -U root -d test_db -f ./table.sql && \
+        psql -U root -d test_db -f ./tables.sql && \
         psql -U root -d test_db -f ./inserts.sql"
         echo 'Tabelas restauradas'
     fi  
@@ -43,6 +43,7 @@ if [ "$#" -gt 0 ]; then
         "cd data && \
         cd utils && \
         psql -U root -d test_db -f ./functions.sql && \
+        psql -U root -d test_db -f ./triggers.sql && \
         psql -U root -d test_db -f ./views.sql"
         echo "Dados inseridos com sucesso."
     fi

@@ -24,3 +24,18 @@ LEFT JOIN
     deposit d ON i.product_id = d.product_id
 WHERE
     NOT EXISTS (SELECT 1 FROM products WHERE id = i.product_id);
+
+/* #################################################################################### */
+
+CREATE OR REPLACE VIEW view_produto_info AS
+SELECT
+  p.name AS produto_nome,
+  COALESCE(i.internal_code, p.id::varchar) AS produto_codigo,
+  p.price AS produto_preco,
+  i.purchace_price AS preco_compra,
+  d.lote,
+  i.validity
+FROM products p
+LEFT JOIN infos i ON p.id = i.product_id
+LEFT JOIN deposit d ON p.id = d.product_id AND i.deposit_id = d.id;
+

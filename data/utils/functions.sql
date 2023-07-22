@@ -1,7 +1,8 @@
 CREATE OR REPLACE FUNCTION realizar_venda(
   produto_id INT,
   quantidade_comprada INT,
-  funcionario_id INT
+  funcionario_id INT,
+  lote_product DATE
 ) RETURNS VOID AS $$
 DECLARE
   produto_preco float;
@@ -29,7 +30,7 @@ BEGIN
     -- Atualizar a quantidade no depósito
     UPDATE deposit
     SET quanty = quanty - quantidade_comprada
-    WHERE product_id = produto_id;
+    WHERE product_id = produto_id AND lote = lote_product;
     
     -- Inserir na tabela de nota fiscal
     INSERT INTO sales (nota_id, employees_id)
@@ -40,3 +41,64 @@ BEGIN
   END IF;
 END;
 $$ LANGUAGE plpgsql;
+
+/* ############################################################################################## */
+/* ############################################################################################## */
+/* ############################################################################################## */
+
+CREATE OR REPLACE FUNCTION realizar_pedido(
+  nome_produto VARCHAR,
+  sup_id INT,
+  lote_produto DATE,
+  preco_compra FLOAT,
+  quantidade INT,
+  data_validade DATE
+) RETURNS VOID AS $$
+DECLARE
+  produto_id INTEGER;
+  deposito_id INTEGER;
+  produto_price FLOAT;
+BEGIN
+  -- Verificar se o produto já existe na tabela products
+  SELECT id, price INTO produto_id, produto_price
+  FROM products
+  WHERE name = nome_produto;
+  
+  IF produto_id IS NULL THEN
+    -- Se o produto não existe, criar um novo produto com o nome e preço calculado
+    INSERT INTO products (name, price)
+    VALUES (nome_produto, preco_compra * 2.5)
+    RETURNING id INTO produto_id;
+  END IF;
+
+  -- Verificar se o produto e o lote já existem na tabela deposit
+  IF NOT EXISTS (SELECT 1 FROM deposit WHERE product_id = produto_id AND lote = lote_produto) THEN
+    
+    -- Se não existir, criar um novo registro no deposito
+    INSERT INTO deposit (product_id, quanty, lote)
+    VALUES (produto_id, quantidade, lote_produto)
+    RETURNING id INTO deposito_id;
+  ELSE
+    -- Se existir, adicionar a quantidade comprada à quantidade do deposito
+    IF preco_compra >= produto_price THEN
+      RAISE EXCEPTION 'O preco_compra nao pode ser maior que o price na tabela products.';
+    END IF;
+    
+    UPDATE deposit
+    SET quanty = quanty + quantidade
+    WHERE product_id = produto_id AND lote = lote_produto
+    RETURNING id INTO deposito_id;
+  END IF;
+  
+  -- Verificar se o produto, fornecedor e depósito existem na tabela infos
+  IF NOT EXISTS (
+    SELECT 1 FROM infos
+    WHERE product_id = produto_id AND supplier_id = sup_id AND deposit_id = deposito_id
+  ) THEN
+    -- Se não existir, criar um novo registro na tabela infos
+    INSERT INTO infos (product_id, supplier_id, deposit_id, validity, purchace_price, internal_code)
+    VALUES (produto_id, sup_id, deposito_id, data_validade, preco_compra, LPAD((RANDOM() * 999000 + 1000)::INT::TEXT, 6, '0'));
+  END IF;
+END;
+$$ LANGUAGE plpgsql;
+
