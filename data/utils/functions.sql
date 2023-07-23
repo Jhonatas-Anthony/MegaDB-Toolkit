@@ -118,3 +118,24 @@ BEGIN
   JOIN products p ON nf.product_id = p.id;
 END;
 $$ LANGUAGE PLPGSQL;
+
+/* ############################################################################################## */
+
+CREATE OR REPLACE FUNCTION calcular_total_vendas_funcionario(
+    funcionario_id integer
+)
+RETURNS float AS $$
+DECLARE
+    total_vendas float;
+BEGIN
+    SELECT SUM(nf.total) INTO total_vendas
+    FROM nota_fiscal nf
+    WHERE nf.id IN (
+        SELECT nota_id
+        FROM sales
+        WHERE employees_id = funcionario_id
+    );
+
+    RETURN COALESCE(total_vendas, 0.0); -- Retorna o total de vendas ou 0.0 se não houver vendas
+END;
+$$ LANGUAGE PLPGSQL;
