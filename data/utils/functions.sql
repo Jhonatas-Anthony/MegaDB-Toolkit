@@ -102,3 +102,19 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+/* ############################################################################################## */
+
+CREATE OR REPLACE FUNCTION obter_notas_fiscais()
+RETURNS TABLE (
+  nota_fiscal_id integer,
+  total float,
+  nome_produto varchar,
+  quantidade integer
+) AS $$
+BEGIN
+  RETURN QUERY
+  SELECT nf.id AS nota_fiscal_id, nf.total, p.name AS nome_produto, nf.quanty AS quantidade
+  FROM nota_fiscal nf
+  JOIN products p ON nf.product_id = p.id;
+END;
+$$ LANGUAGE PLPGSQL;
