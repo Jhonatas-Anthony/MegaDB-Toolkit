@@ -8,16 +8,17 @@ CREATE TABLE IF NOT EXISTS "infos" (
   "id" serial PRIMARY KEY ,
   "product_id" integer,
   "supplier_id" integer,
+  "deposit_id" integer, 
   "validity" date,
   "purchace_price" float,
   "internal_code" varchar
 );
 
 CREATE TABLE IF NOT EXISTS "deposit" (
+  "id" serial PRIMARY KEY, 
   "product_id" integer,
   "quanty" integer,
-  "lote" date,
-  PRIMARY KEY(product_id, lote)
+  "lote" date
 );
 
 CREATE TABLE IF NOT EXISTS "nota_fiscal" (
@@ -72,6 +73,8 @@ ALTER TABLE "nota_fiscal" ADD FOREIGN KEY ("product_id") REFERENCES "products" (
 ALTER TABLE "sales" ADD FOREIGN KEY ("nota_id") REFERENCES "nota_fiscal" ("id");
 ALTER TABLE "sales" ADD FOREIGN KEY ("employees_id") REFERENCES "employees" ("id");
 ALTER TABLE "deposit" ADD FOREIGN KEY ("product_id") REFERENCES "products" ("id");
+ALTER TABLE "deposit" ADD CONSTRAINT "comp" UNIQUE ("product_id","lote");
 ALTER TABLE "employees" ADD FOREIGN KEY ("office_id") REFERENCES "offices" ("id");
+ALTER TABLE "infos" ADD FOREIGN KEY ("deposit_id") REFERENCES "deposit" ("id");
 /* ALTER TABLE "notaFiscal_products" ADD FOREIGN KEY ("notaFiscal_product_id") REFERENCES "notaFiscal" ("id");
 ALTER TABLE "notaFiscal_products" ADD FOREIGN KEY ("products_id") REFERENCES "products" ("id"); */
