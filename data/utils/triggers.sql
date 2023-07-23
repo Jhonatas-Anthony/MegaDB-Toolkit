@@ -10,7 +10,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER trigger_verificar_preco_compra
+CREATE OR REPLACE TRIGGER trigger_verificar_preco_compra
 BEFORE INSERT ON infos
 FOR EACH ROW
 EXECUTE FUNCTION verificar_preco_compra();
@@ -31,3 +31,20 @@ CREATE OR REPLACE TRIGGER verificar_funcionario
 BEFORE INSERT ON nota_fiscal
 FOR EACH ROW
 EXECUTE FUNCTION verificar_tipo_funcionario();
+
+/* #################################################################################### */
+
+CREATE OR REPLACE FUNCTION verificar_quant_disponivel()
+RETURNS TRIGGER AS $$
+BEGIN
+  IF (SELECT quanty FROM deposit WHERE product_id = NEW.product_id) < NEW.quanty THEN
+    RAISE EXCEPTION 'Não há quantidade suficiente deste produto para realizar a compra.';
+  END IF;
+  RETURN NEW; -- Retornar NEW apenas se a verificação passar
+END;
+$$ LANGUAGE PLPGSQL;
+
+CREATE OR REPLACE TRIGGER verificar_quant
+BEFORE INSERT ON nota_fiscal
+FOR EACH ROW
+EXECUTE FUNCTION verificar_quant_disponivel();
