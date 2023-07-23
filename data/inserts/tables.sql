@@ -25,7 +25,8 @@ CREATE TABLE IF NOT EXISTS "nota_fiscal" (
   "id" serial PRIMARY KEY ,
   "product_id" integer,
   "quanty" integer,
-  "total" float
+  "total" float,
+  "id_employee" integer
 );
 
 CREATE TABLE IF NOT EXISTS "sales" (
@@ -70,6 +71,7 @@ CREATE TABLE IF NOT EXISTS "offices" (
 ALTER TABLE "infos" ADD FOREIGN KEY ("product_id") REFERENCES "products" ("id");
 ALTER TABLE "infos" ADD FOREIGN KEY ("supplier_id") REFERENCES "supliers" ("id");
 ALTER TABLE "nota_fiscal" ADD FOREIGN KEY ("product_id") REFERENCES "products" ("id");
+ALTER TABLE "nota_fiscal" ADD FOREIGN KEY ("id_employee") REFERENCES "employees" ("id");
 ALTER TABLE "sales" ADD FOREIGN KEY ("nota_id") REFERENCES "nota_fiscal" ("id");
 ALTER TABLE "sales" ADD FOREIGN KEY ("employees_id") REFERENCES "employees" ("id");
 ALTER TABLE "deposit" ADD FOREIGN KEY ("product_id") REFERENCES "products" ("id");
