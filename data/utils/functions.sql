@@ -24,8 +24,8 @@ BEGIN
     total_venda := produto_preco * quantidade_comprada;
     
     -- Inserir a venda na tabela de vendas
-    INSERT INTO nota_fiscal (product_id, quanty, total)
-    VALUES (produto_id, quantidade_comprada, total_venda);
+    INSERT INTO nota_fiscal (product_id, quanty, total, id_employee)
+    VALUES (produto_id, quantidade_comprada, total_venda, funcionario_id);
     
     -- Atualizar a quantidade no depósito
     UPDATE deposit
@@ -42,8 +42,6 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-/* ############################################################################################## */
-/* ############################################################################################## */
 /* ############################################################################################## */
 
 CREATE OR REPLACE FUNCTION realizar_pedido(
@@ -137,5 +135,28 @@ BEGIN
     );
 
     RETURN COALESCE(total_vendas, 0.0); -- Retorna o total de vendas ou 0.0 se não houver vendas
+END;
+$$ LANGUAGE PLPGSQL;
+
+/* ############################################################################################## */
+
+CREATE OR REPLACE FUNCTION obter_produtos_menor_quantidade()
+RETURNS TABLE (
+  produto_id integer,
+  nome_produto varchar,
+  quantidade_disponivel integer
+) AS $$
+BEGIN
+  RETURN QUERY
+  SELECT d.product_id, p.name AS nome_produto, d.quanty AS quantidade_disponivel
+  FROM deposit d
+  JOIN products p ON d.product_id = p.id
+  WHERE d.quanty IN (
+    SELECT quanty
+    FROM deposit
+    ORDER BY quanty ASC
+    LIMIT 5
+  )
+  ORDER BY d.quanty ASC;
 END;
 $$ LANGUAGE PLPGSQL;
