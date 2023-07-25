@@ -40,7 +40,7 @@ BEGIN
   IF (SELECT quanty FROM deposit WHERE product_id = NEW.product_id) < NEW.quanty THEN
     RAISE EXCEPTION 'Não há quantidade suficiente deste produto para realizar a compra.';
   END IF;
-  RETURN NEW; -- Retornar NEW apenas se a verificação passar
+  RETURN NEW;
 END;
 $$ LANGUAGE PLPGSQL;
 

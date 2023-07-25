@@ -360,6 +360,3 @@ INSERT INTO employees (name, address, phone, cpf, office_id, email) VALUES
 ('Gabriel Oliveira', 'Rua das Marés, 654 - Bairro Orla Azul', '(012) 345-6789', '935 459 999 26', 6, 'chloe.hall@example.com'),
 ('Helena Cardoso', 'Avenida das Estrelas, 987 - Bairro Cosmos', '(876) 109-4321', '661 679 743 99', 7, 'jackson.young@example.com'),
 ('Bernardo Ramos', 'Travessa da Alegria, 543 - Bairro Recanto Feliz', '(234) 678-9012', '841 549 695 43', 7, 'grace.lopez@example.com');
-
-
-

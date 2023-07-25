@@ -49,5 +49,3 @@ o.name AS office_name,
 o.salary AS salary
 FROM employees e
 INNER JOIN offices o ON e.office_id = o.id;
-
-

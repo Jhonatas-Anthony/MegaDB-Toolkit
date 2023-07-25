@@ -60,12 +60,6 @@ CREATE TABLE IF NOT EXISTS "offices" (
   "salary" float
 );
 
-/* CREATE TABLE IF NOT EXISTS "notaFiscal_products" (
-  "notaFiscal_product_id" integer,
-  "products_id" integer,
-  PRIMARY KEY ("notaFiscal_product_id", "products_id")
-); */
-
 -- Adicionando chaves estrangeiras
 
 ALTER TABLE "infos" ADD FOREIGN KEY ("product_id") REFERENCES "products" ("id");
@@ -78,5 +72,3 @@ ALTER TABLE "deposit" ADD FOREIGN KEY ("product_id") REFERENCES "products" ("id"
 ALTER TABLE "deposit" ADD CONSTRAINT "comp" UNIQUE ("product_id","lote");
 ALTER TABLE "employees" ADD FOREIGN KEY ("office_id") REFERENCES "offices" ("id");
 ALTER TABLE "infos" ADD FOREIGN KEY ("deposit_id") REFERENCES "deposit" ("id");
-/* ALTER TABLE "notaFiscal_products" ADD FOREIGN KEY ("notaFiscal_product_id") REFERENCES "notaFiscal" ("id");
-ALTER TABLE "notaFiscal_products" ADD FOREIGN KEY ("products_id") REFERENCES "products" ("id"); */
