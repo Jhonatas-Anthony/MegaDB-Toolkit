@@ -39,3 +39,15 @@ FROM products p
 LEFT JOIN infos i ON p.id = i.product_id
 LEFT JOIN deposit d ON p.id = d.product_id AND i.deposit_id = d.id;
 
+/* #################################################################################### */
+
+CREATE OR REPLACE VIEW employee_info_view AS
+SELECT 
+e.id AS employee_id, 
+e.name AS employee_name, 
+o.name AS office_name, 
+o.salary AS salary
+FROM employees e
+INNER JOIN offices o ON e.office_id = o.id;
+
+

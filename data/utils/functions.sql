@@ -160,3 +160,18 @@ BEGIN
   ORDER BY d.quanty ASC;
 END;
 $$ LANGUAGE PLPGSQL;
+
+/* ############################################################################################## */
+
+CREATE OR REPLACE FUNCTION process_nota_fiscal_cursor() RETURNS VOID AS $$
+DECLARE
+    nota_row nota_fiscal%ROWTYPE;
+BEGIN
+    -- Abrindo o cursor para percorrer a tabela "nota_fiscal"
+    FOR nota_row IN (SELECT * FROM nota_fiscal) LOOP
+        -- Exibindo informações sobre cada nota fiscal
+        RAISE NOTICE 'Nota Fiscal ID: %, Product ID: %, Quantity: %, Total: %, Employee ID: %',
+                     nota_row.id, nota_row.product_id, nota_row.quanty, nota_row.total, nota_row.id_employee;
+    END LOOP;
+END;
+$$ LANGUAGE PLPGSQL;
