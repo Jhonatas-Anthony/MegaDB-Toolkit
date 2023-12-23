@@ -1,54 +1,71 @@
 #!/bin/bash
 
+# Função para imprimir mensagem de ajuda estilizada
+print_help() {
+    echo "Comandos disponíveis:"
+    echo "  ./pg start  - Inicia execução"
+    echo "  ./pg bash   - Terminal do container em modo interativo"
+    echo "  ./pg pop    - Popula o banco com os dados e tabelas"
+    echo "  ./pg reset  - Reseta as tabelas para o estado original"
+    echo "  ./pg utils  - Cria os functions, views, triggers implementados em /utils"
+    echo "  ./pg backup - Gera um arquivo de backup do banco de dados"
+    echo "  ./pg stop   - Interrompe execução do container"
+}
+
 if [ "$#" -gt 0 ]; then
     # Inicialização do container
     if [ $1 = "start" ]; then
         echo 'Inicializando container...'
         docker-compose up
-    fi
     # Abrir terminal em modo interativo
-    if [ $1 = "bash" ]; then
+    elif [ $1 = "bash" ]; then
         echo 'Terminal do container aberto em modo interativo'
         echo 'Para sair digite exit'
         docker exec -it project /bin/bash
-    fi
     # Povoar servidor postgres com os arquivos tabela.sql e inserts.sql
-    if [ $1 = "pop" ]; then
+    elif [ $1 = "pop" ]; then
         echo 'Populando servidor...'
         docker exec -it pg_container /bin/bash -c \
-        "cd data && \
+            "cd data && \
         cd inserts && \
         psql -U root -d test_db -f ./tables.sql && \
         psql -U root -d test_db -f ./inserts.sql"
         echo "Dados inseridos com sucesso."
-    fi
     # Restaurando tabelas para o estado original
-    if [ $1 = "reset" ]; then
+    elif [ $1 = "reset" ]; then
         echo 'Removendo tabelas do servidor...'
         docker exec -it pg_container /bin/bash -c \
-        "psql -U root -d test_db -c \
+            "psql -U root -d test_db -c \
         \"DROP SCHEMA IF EXISTS public CASCADE; \
         CREATE SCHEMA IF NOT EXISTS public;\""
         echo 'Adicionando novamente...'
         docker exec -it pg_container /bin/bash -c \
-        "cd data && \
+            "cd data && \
         cd inserts && \
         psql -U root -d test_db -f ./tables.sql && \
         psql -U root -d test_db -f ./inserts.sql"
         echo 'Tabelas restauradas'
-    fi  
-    if [ $1 = "utils" ]; then
+    elif [ $1 = "utils" ]; then
         echo 'Populando servidor com arquivos de utilidade...'
         docker exec -it pg_container /bin/bash -c \
-        "cd data && \
+            "cd data && \
         cd utils && \
         psql -U root -d test_db -f ./functions.sql && \
         psql -U root -d test_db -f ./triggers.sql && \
         psql -U root -d test_db -f ./views.sql"
         echo "Dados inseridos com sucesso."
-    fi
-    if [ $1 = "stop" ]; then
+    elif [ $1 = "backup" ]; then
+        echo 'Criando arquivo de backup do banco de dados...'
+        docker exec -it pg_container /bin/bash -c \
+            "pg_dump -U root test_db > /data/backup/backup_db.sql"
+        echo "Backup realizado com sucesso."
+    elif [ $1 = "stop" ]; then
         echo 'Finalizando execução...'
         docker-compose stop
+    else
+        echo "Comando inválido! Por favor, utilize um dos comandos disponíveis:"
+        print_help
     fi
+else
+    print_help
 fi
